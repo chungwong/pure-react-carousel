@@ -66,3 +66,25 @@ export const boundedRange = ({ min, max, x }) => Math.min(
   max,
   Math.max(min, x),
 );
+
+export const safeArrayMerge = (destination, source) => source;
+
+/**
+ * deepmerge options that stop it descending into values it was handed.
+ *
+ * Without them it walks React elements: its "is this an element, leave it
+ * alone" test is `$$typeof === Symbol.for("react.element")`, and React 19
+ * renamed that symbol to `react.transitional.element`. Development elements
+ * carry `_owner` — the owning Fiber during a render — so the walk goes
+ * circular and throws `RangeError: Maximum call stack size exceeded`.
+ */
+export const safeMergeOptions = {
+  arrayMerge: safeArrayMerge,
+  clone: false,
+  customMerge: (key) => {
+    if (key === '$$typeof' || key === '_owner' || key === '_store' || key === 'ref' || key === 'key') {
+      return (target, source) => source;
+    }
+    return undefined;
+  },
+};

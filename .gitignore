@@ -47,7 +47,6 @@ node_modules
 .sonar
 
 # dist folder
-/dist
 
 # Bamboo Artifacts
 eslint.json
